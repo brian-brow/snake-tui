@@ -147,7 +147,7 @@ void applyInput(Game *g, enum input in)
 
 int load_high_score(void)
 {
-  FILE *f = fopen("highscore.txt", "r");
+  FILE *f = fopen("~/tmp/snake_tui/highscore.txt", "r");
   if (!f)
     return 0;
 
@@ -172,7 +172,7 @@ int load_high_score(void)
 
 void save_high_score(int score)
 {
-  FILE *f = fopen("highscore.txt", "w");
+  FILE *f = fopen("~/tmp/snake_tui/highscore.txt", "w");
   if (!f)
     return;
   fprintf(f, "%d\n", score);
