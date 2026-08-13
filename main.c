@@ -51,6 +51,8 @@ enum input {
 };
 
 #define TITLE_W 38   /* widest line in title_screen, in columns */
+#define SUBTITLE_W 35   /* widest line in subtitle, in columns */
+#define TITLE_GAP 1   /* blank rows between the title and the subtitle */
 
 static const char *const title_screen[] = {
 "  _________              __           ",
@@ -61,10 +63,28 @@ static const char *const title_screen[] = {
 "        \\/     \\/     \\/     \\/    \\/ ",
 };
 
-static void draw_title(int row, int col)
+static const char *const subtitle[] = {
+"                          ▌        ",
+"▛▀▖▙▀▖▞▀▖▞▀▘▞▀▘ ▝▀▖▛▀▖▌ ▌ ▌▗▘▞▀▖▌ ▌",
+"▙▄▘▌  ▛▀ ▝▀▖▝▀▖ ▞▀▌▌ ▌▚▄▌ ▛▚ ▛▀ ▚▄▌",
+"▌  ▘  ▝▀▘▀▀ ▀▀  ▝▀▘▘ ▘▗▄▘ ▘ ▘▝▀▘▗▄▘",
+};
+
+static void draw_block(int row, int col, const char *const *lines, int count)
 {
-  for (int i = 0; i < (int)ARRAY_SIZE(title_screen); i++)
-    printf("\033[%d;%dH%s", row + i, col, title_screen[i]);
+  for (int i = 0; i < count; i++)
+    printf("\033[%d;%dH%s", row + i, col, lines[i]);
+}
+
+static void draw_title(void)
+{
+  int title_h = (int)ARRAY_SIZE(title_screen);
+  int sub_h   = (int)ARRAY_SIZE(subtitle);
+  int row     = BOX_Y0 + 1 + (ROWS - (title_h + TITLE_GAP + sub_h)) / 2;
+
+  draw_block(row, BOX_X0 + 1 + (COLS - TITLE_W) / 2, title_screen, title_h);
+  draw_block(row + title_h + TITLE_GAP,
+             BOX_X0 + 1 + (COLS - SUBTITLE_W) / 2, subtitle, sub_h);
 }
 
 void restoreTerminal(void)
@@ -278,8 +298,7 @@ int main(void)
     }
 
     if (game.title)
-      draw_title(BOX_Y0 + 1 + (ROWS - (int)ARRAY_SIZE(title_screen)) / 2,
-                 BOX_X0 + 1 + (COLS - TITLE_W) / 2);
+      draw_title();
 
     fflush(stdout);
 
