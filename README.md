@@ -2,6 +2,8 @@
 
 A basic snake game in c in your terminal.
 
+![The snake-tui title screen](title.png)
+
 Took far too long to make.
 
 ## Requirements
