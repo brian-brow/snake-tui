@@ -5,6 +5,10 @@
 #include <termios.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/stat.h>
+
+#define HIGHSCORE_DIR  "/tmp/snake-tui"
+#define HIGHSCORE_PATH HIGHSCORE_DIR "/highscore.txt"
 
 #define FRAME_MS 120
 #define BOX_X0 60
@@ -147,7 +151,7 @@ void applyInput(Game *g, enum input in)
 
 int load_high_score(void)
 {
-  FILE *f = fopen("~/tmp/snake_tui/highscore.txt", "r");
+  FILE *f = fopen(HIGHSCORE_PATH, "r");
   if (!f)
     return 0;
 
@@ -172,7 +176,8 @@ int load_high_score(void)
 
 void save_high_score(int score)
 {
-  FILE *f = fopen("~/tmp/snake_tui/highscore.txt", "w");
+  mkdir(HIGHSCORE_DIR, 0777);
+  FILE *f = fopen(HIGHSCORE_PATH, "w");
   if (!f)
     return;
   fprintf(f, "%d\n", score);
