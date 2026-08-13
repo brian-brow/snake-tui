@@ -50,7 +50,7 @@ enum input {
   INPUT_UP, INPUT_DOWN, INPUT_LEFT, INPUT_RIGHT,
 };
 
-#define TITLE_W 38
+#define TITLE_W 38   /* widest line in title_screen, in columns */
 
 static const char *const title_screen[] = {
 "  _________              __           ",
@@ -125,6 +125,40 @@ void applyInput(Game *g, enum input in)
   }
 }
 
+int load_high_score(void)
+{
+  FILE *f = fopen("highscore.txt", "r");
+  if (!f)
+    return 0;
+
+  char buf[32];
+  if (!fgets(buf, sizeof buf, f)) {
+    fclose(f);
+    return 0;
+  }
+  char *end;
+  long v = strtol(buf, &end, 10);
+  if (end == buf) {
+    fclose(f);
+    return 0;
+  }
+  fclose(f);
+
+  if (v < 0)        v = 0;
+  if (v > BODY_MAX) v = BODY_MAX;
+
+  return v;
+}
+
+void save_high_score(int score)
+{
+  FILE *f = fopen("highscore.txt", "w");
+  if (!f)
+    return;
+  fprintf(f, "%d\n", score);
+  fclose(f);
+}
+
 void resetSnake(Game *g)
 {
   memset(g->body, 0, sizeof g->body);
@@ -134,8 +168,10 @@ void resetSnake(Game *g)
   g->dirX = 0;
   g->dirY = 0;
 
-  if (g->length > g->high_score)
+  if (g->length > g->high_score) {
     g->high_score = g->length;
+    save_high_score(g->high_score);
+  }
 
   g->length = 1;
 }
@@ -199,7 +235,7 @@ int main(void)
   printf("\033[2J\033[?25l"); // clear screen and hide cursor
   atexit(restoreTerminal);
 
-  struct timespec frame = { .tv_sec = 0, .tv_nsec = FRAME_MS * 1250000L };
+  struct timespec frame = { .tv_sec = 0, .tv_nsec = FRAME_MS * 1000000L };
 
   tcgetattr(STDIN_FILENO, &orig);
   struct termios raw = orig;
@@ -214,7 +250,7 @@ int main(void)
     .body[0] = { .x = COLS - 3, .y = ROWS - 2 },
     .food = { .x = 3, .y = 1 },
     .length = 1,
-    .high_score = 0,
+    .high_score = load_high_score(),
     .dirX = 0,
     .dirY = 0,
     .running = true,
@@ -225,6 +261,7 @@ int main(void)
     applyInput(&game, read_input());
 
     printf("\033[H"); // moves cursor to top left corner
+
 
     int row = BOX_Y0;
     draw_border(row++, BOX_TL, BOX_H, BOX_TR);
@@ -240,11 +277,9 @@ int main(void)
       printf("\033[%d;%dH%s", game.body[i].y + 1 + BOX_Y0, game.body[i].x + 1 + BOX_X0, SNAKE);
     }
 
-  
-
     if (game.title)
       draw_title(BOX_Y0 + 1 + (ROWS - (int)ARRAY_SIZE(title_screen)) / 2,
-                BOX_X0 + 1 + (COLS - TITLE_W) / 2);
+                 BOX_X0 + 1 + (COLS - TITLE_W) / 2);
 
     fflush(stdout);
 

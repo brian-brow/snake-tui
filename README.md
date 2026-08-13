@@ -44,6 +44,19 @@ Any direction key dismisses the title screen and starts the game.
 ## How it plays
 
 Eat the red `o` to grow. Hitting a wall or your own tail resets the snake, and
-your best length so far is kept as the high score.
+your best length so far is kept as the high score. The snake moves one cell
+every 120 ms.
+
+## High scores
+
+Your best length is saved to `highscore.txt` and loaded again the next time you
+play. A few details worth knowing:
+
+- The score is only recorded **on death**. Quitting with `q` mid-run won't save
+  it, even if you were on your best run ever.
+- The file is created in whatever directory you launch the game from, so
+  starting it from somewhere else gives you a separate high score.
+- If the file is missing, empty, or edited into nonsense, the high score just
+  starts at 0.
 
 Enjoy.
