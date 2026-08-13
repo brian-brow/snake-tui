@@ -222,7 +222,7 @@ void updateSnake(Game *g)
 
 static void draw_border(int row, const char *left, const char *mid, const char *right)
 { 
-  printf("\033[%d;%dH", row, BOX_X0);
+  printf("\033[2K\033[%d;%dH", row, BOX_X0);
   fputs(left, stdout);
   for (int i = 0; i < COLS; i++)
     fputs(mid, stdout);
