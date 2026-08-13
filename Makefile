@@ -17,7 +17,6 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 
-# -MMD -MP writes .d files so headers are tracked automatically
 %.o: %.c
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 
