@@ -123,24 +123,32 @@ void applyInput(Game *g, enum input in)
       g->running = false;
       break;
     case INPUT_UP:
-      g->dirX = 0;
-      g->dirY = -1;
-      g->title = false;
+      if (g->dirY != 1) {
+        g->dirX = 0;
+        g->dirY = -1;
+        g->title = false;
+      }
       break;
     case INPUT_DOWN:
-      g->dirX = 0;
-      g->dirY = 1;
-      g->title = false;
+      if (g->dirY != -1) {
+        g->dirX = 0;
+        g->dirY = 1;
+        g->title = false;
+      }
       break;
     case INPUT_LEFT:
-      g->dirX = -1;
-      g->dirY = 0;
-      g->title = false;
+      if (g->dirX != 1) {
+        g->dirX = -1;
+        g->dirY = 0;
+        g->title = false;
+      }  
       break;
     case INPUT_RIGHT:
-      g->dirX = 1;
-      g->dirY = 0;
-      g->title = false;
+      if (g->dirX != -1) {
+        g->dirX = 1;
+        g->dirY = 0;
+        g->title = false;
+      }
       break;
     case INPUT_NONE:
       break;
